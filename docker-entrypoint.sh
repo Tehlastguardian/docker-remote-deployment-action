@@ -13,6 +13,11 @@ if [ -z "$INPUT_REMOTE_DOCKER_HOST" ]; then
     exit 1
 fi
 
+if [ -z "$INPUT_STACK_NAME" ]; then
+    echo "Input stack_name is required!"
+    exit 1
+fi
+
 if [ -z "$INPUT_SSH_PUBLIC_KEY" ]; then
     echo "Input ssh_public_key is required!"
     exit 1
@@ -72,10 +77,7 @@ if  [ -n "$INPUT_DOCKER_LOGIN_PASSWORD" ] || [ -n "$INPUT_DOCKER_LOGIN_USER" ] |
   docker login -u "$INPUT_DOCKER_LOGIN_USER" -p "$INPUT_DOCKER_LOGIN_PASSWORD" "$INPUT_DOCKER_LOGIN_REGISTRY"
 fi
 
-echo "Command: ${DEPLOYMENT_COMMAND} pull"
-${DEPLOYMENT_COMMAND} ${DEPLOYMENT_COMMAND_OPTIONS} pull
 
-echo "Command: ${DEPLOYMENT_COMMAND} ${INPUT_ARGS}"
-${DEPLOYMENT_COMMAND} ${DEPLOYMENT_COMMAND_OPTIONS} ${INPUT_ARGS}
+docker stack deploy -c $STACK_FILE --with-registry-auth $INPUT_STACK_NAME
 
 
